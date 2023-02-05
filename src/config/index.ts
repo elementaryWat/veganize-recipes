@@ -5,7 +5,8 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export async function getResponse(prompt: string) {
+export async function getResponse(ingredients: string, steps: string) {
+  let prompt = generatePrompt(ingredients, steps);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: prompt,
@@ -14,3 +15,20 @@ export async function getResponse(prompt: string) {
   });
   return response.data;
 }
+
+function generatePrompt(ingredients: string, steps: string) {
+  return `Generate the veganized version of the recipe with these ingredients: ${ingredients} and these steps:${steps}\nGive me the response in  the following JSON format:${JSON.stringify(
+    VEGAN_RECIPE_OBJECT
+  )}`;
+}
+
+export const VEGAN_RECIPE_OBJECT = {
+  name: "Recipe Name",
+  ingredients: [
+    {
+      originalIngredient: "Ingredient name",
+      substitute: "Substituted ingredient name",
+    },
+  ],
+  steps: ["Step 1", "Step 2", "Step 3"],
+};

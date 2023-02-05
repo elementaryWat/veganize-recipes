@@ -5,14 +5,14 @@ import { CreateCompletionResponse } from "openai";
 import { getResponse } from "./config";
 
 function App() {
-  const [prompt, setPrompt] = useState("");
-  const [response, setResponse] = useState<CreateCompletionResponse | null>(
-    null
-  );
+  const [ingredients, setIngredients] = useState("");
+  const [steps, setSteps] = useState("");
+  const [veganizedRecipe, setVeganizedRecipe] =
+    useState<CreateCompletionResponse | null>(null);
 
   async function handleSubmit() {
-    const res = await getResponse(prompt);
-    setResponse(res);
+    const res = await getResponse(ingredients, steps);
+    setVeganizedRecipe(res);
   }
 
   return (
@@ -29,16 +29,22 @@ function App() {
       </Typography>
       <TextField
         multiline
-        label="Prompt"
-        value={prompt}
-        onChange={(event) => setPrompt(event.target.value)}
+        label="Ingredients"
+        value={ingredients}
+        onChange={(event) => setIngredients(event.target.value)}
+      />
+      <TextField
+        multiline
+        label="Recipe"
+        value={steps}
+        onChange={(event) => setSteps(event.target.value)}
       />
       <Button onClick={handleSubmit}>Submit</Button>
-      {response === null ? (
+      {veganizedRecipe === null ? (
         <p>No response yet</p>
       ) : (
         <div>
-          <p>Response: {response.choices[0].text}</p>
+          <p>Response: {veganizedRecipe.choices[0].text}</p>
         </div>
       )}
     </Grid>
