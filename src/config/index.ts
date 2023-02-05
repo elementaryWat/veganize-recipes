@@ -5,10 +5,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export async function getResponse() {
+export async function getResponse(prompt: string) {
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: "Say this is a test",
+    prompt: prompt,
     temperature: 0,
     max_tokens: 7,
   });
