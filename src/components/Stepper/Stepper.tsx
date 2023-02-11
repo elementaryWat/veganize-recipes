@@ -6,55 +6,65 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Grid, TextField } from "@mui/material";
+import { getResponse } from "../../config";
 // import { getResponse } from "./config";
 
 const steps = [
+  "Enter the title of the recipe",
   "Enter the ingredients of the recipe",
   "Enter the steps of the recipe",
-  "Veganize the recipe",
 ];
 
 export default function RecipeStepper() {
+  const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [stepsRecipe, setStepsRecipe] = useState("");
-  //   const [veganizedRecipe, setVeganizedRecipe] = useState<string>("null");
+  const [veganizedRecipe, setVeganizedRecipe] = useState<string | null>(null);
   const [activeStep, setActiveStep] = React.useState(0);
-
-  const isStepOptional = (step: number) => {
-    return step === 1;
-  };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep === steps.length - 1) {
+      handleSubmit();
+    }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  //   async function handleSubmit() {
-  //     const res = await getResponse(ingredients, steps);
-  //     setVeganizedRecipe(res);
-  //   }
+  async function handleSubmit() {
+    const res = await getResponse(ingredients, stepsRecipe);
+    setVeganizedRecipe(res);
+  }
 
   const STEPS_INPUT: { [key: number]: ReactElement } = {
     0: (
       <TextField
         fullWidth
-        multiline
-        label="Ingredients"
-        value={ingredients}
-        maxRows={6}
-        onChange={(event) => setIngredients(event.target.value)}
+        label="Title"
+        value={title}
+        maxRows={10}
+        onChange={(event) => setTitle(event.target.value)}
       />
     ),
     1: (
       <TextField
         fullWidth
         multiline
+        label="Ingredients"
+        value={ingredients}
+        maxRows={10}
+        onChange={(event) => setIngredients(event.target.value)}
+      />
+    ),
+    2: (
+      <TextField
+        fullWidth
+        multiline
         label="Recipe"
         value={stepsRecipe}
-        maxRows={6}
+        maxRows={10}
         onChange={(event) => setStepsRecipe(event.target.value)}
       />
     ),
@@ -65,34 +75,35 @@ export default function RecipeStepper() {
   };
 
   return (
-    <Grid p={2} width="100%" flex={1} container flexDirection="column">
-      <Typography variant="h5" textAlign="center">
+    <Grid
+      zIndex={1}
+      p={2}
+      width="100%"
+      flex={1}
+      container
+      flexDirection="column"
+    >
+      <Typography variant="h5" textAlign="center" color="white">
         Veganizer
       </Typography>
       <Grid mt={2} container flex={1} flexDirection="column">
         <Stepper activeStep={activeStep}>
           {steps.map((label, index) => {
             const stepProps: { completed?: boolean } = {};
-            const labelProps: {
-              optional?: React.ReactNode;
-            } = {};
-            if (isStepOptional(index)) {
-              labelProps.optional = (
-                <Typography variant="caption">Optional</Typography>
-              );
-            }
             return (
               <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
+                <StepLabel>{label}</StepLabel>
               </Step>
             );
           })}
         </Stepper>
         {activeStep === steps.length ? (
           <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
+            {veganizedRecipe !== null && (
+              <div>
+                <p>{veganizedRecipe}</p>
+              </div>
+            )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
               <Button onClick={handleReset}>Reset</Button>
@@ -125,8 +136,8 @@ export default function RecipeStepper() {
                 Back
               </Button>
               <Grid>
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                <Button onClick={handleNext} color="secondary">
+                  {activeStep === steps.length - 1 ? "Veganize" : "Next"}
                 </Button>
               </Grid>
             </Grid>
