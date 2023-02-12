@@ -1,43 +1,26 @@
 import React from "react";
 import { Grid, styled, Typography } from "@mui/material";
-
-const Root = styled(Grid)`
-  background-image: url("https://danzadefogones.com/wp-content/uploads/2018/06/Ceviche-vegano-2.jpg");
-  flex: 1;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-`;
-
-const Description = styled(Typography)`
-  && {
-    padding: 24px;
-  }
-`;
+import { RECETA_VEGANA } from "../../config";
+import Description from "./Description";
 
 interface Props {
-  title: string;
-  description: string;
+  imgUrl: string;
+  recipe: RECETA_VEGANA;
 }
 
-const VeganRecipe: React.FC<Props> = ({ title, description }) => {
+const VeganRecipe: React.FC<Props> = ({ imgUrl, recipe }) => {
   return (
-    <>
-      <img
-        height="300px"
-        width="100%"
-        src={`https://www.somnatur.com/wp-content/uploads/2017/11/ceviche-de-calabaza-eco.jpg`}
-        alt={title}
-      />
-      <Typography textAlign="center" variant="h3">
-        {title}
-      </Typography>
-      <Grid container pt={2} xs={12} height="30%" overflow="scroll">
-        <Description variant="body1">{description}</Description>
+    <Grid container flex={1}>
+      <Grid container alignItems="center" flexDirection="column">
+        <Typography textAlign="center" variant="h4">
+          {recipe.nombre}
+        </Typography>
+        <img height="300vh" src={imgUrl} alt={recipe.nombre} />
       </Grid>
-    </>
+      <Grid container xs={12} height="auto" overflow="scroll">
+        <Description ingredients={recipe.ingredientes} steps={recipe.pasos} />
+      </Grid>
+    </Grid>
   );
 };
 
