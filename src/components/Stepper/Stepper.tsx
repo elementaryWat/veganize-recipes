@@ -5,9 +5,10 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Grid, TextField } from "@mui/material";
+import { CircularProgress, Grid, TextField } from "@mui/material";
 import { getResponse } from "../../config";
-// import { getResponse } from "./config";
+import VeganRecipe from "../VeganRecipe/VeganRecipe";
+import { CreateCompletionResponse } from "openai";
 
 const steps = [
   "Enter the title of the recipe",
@@ -17,9 +18,11 @@ const steps = [
 
 export default function RecipeStepper() {
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState("");
   const [stepsRecipe, setStepsRecipe] = useState("");
-  const [veganizedRecipe, setVeganizedRecipe] = useState<string | null>(null);
+  const [veganizedRecipe, setVeganizedRecipe] =
+    useState<CreateCompletionResponse | null>(null);
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -34,8 +37,10 @@ export default function RecipeStepper() {
   };
 
   async function handleSubmit() {
+    setLoading(true);
     const res = await getResponse(ingredients, stepsRecipe);
     setVeganizedRecipe(res);
+    setLoading(false);
   }
 
   const STEPS_INPUT: { [key: number]: ReactElement } = {
@@ -87,28 +92,21 @@ export default function RecipeStepper() {
         Veganizer
       </Typography>
       <Grid mt={2} container flex={1} flexDirection="column">
-        <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
         {activeStep === steps.length ? (
-          <React.Fragment>
-            {veganizedRecipe !== null && (
-              <div>
-                <p>{veganizedRecipe}</p>
-              </div>
+          <Grid container height="100vh">
+            {veganizedRecipe !== null && !loading ? (
+              <VeganRecipe
+                title="Vegan Recipe"
+                description={veganizedRecipe.choices[0].text as string}
+              />
+            ) : (
+              <CircularProgress />
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
               <Button onClick={handleReset}>Reset</Button>
             </Box>
-          </React.Fragment>
+          </Grid>
         ) : (
           <Grid
             container
@@ -117,6 +115,16 @@ export default function RecipeStepper() {
             flexDirection="column"
             justifyContent="space-between"
           >
+            <Stepper activeStep={activeStep}>
+              {steps.map((label, index) => {
+                const stepProps: { completed?: boolean } = {};
+                return (
+                  <Step key={label} {...stepProps}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
             <Grid container p={2} justifyContent="center" alignItems="center">
               {STEPS_INPUT[activeStep]}
             </Grid>
