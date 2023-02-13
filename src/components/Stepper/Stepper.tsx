@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import { CircularProgress, Grid, TextField } from "@mui/material";
 import { createImage, getResponse, RECETA_VEGANA } from "../../config";
 import VeganRecipe from "../VeganRecipe/VeganRecipe";
-import { CreateCompletionResponse } from "openai";
 
 const steps = [
   "Enter the title of the recipe",
@@ -98,7 +97,14 @@ export default function RecipeStepper() {
             {veganizedRecipe !== null && !loading ? (
               <VeganRecipe imgUrl={imageUrl} recipe={veganizedRecipe} />
             ) : (
-              <CircularProgress />
+              <Grid
+                container
+                flex={1}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <CircularProgress />
+              </Grid>
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
