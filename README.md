@@ -21,10 +21,11 @@ Node.js
 ## Installing
 Clone the repository
 cd veganize-recipe
-npm install
-## Start the development server
-npm start
-The application will now be running on http://localhost:3000/
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
 
 ## Deployment
 This project can be deployed on a web server or hosting service of your choice.
